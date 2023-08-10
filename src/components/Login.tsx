@@ -6,7 +6,9 @@ const Login = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user`);
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/user/:id`
+      );
       const data = await response.json();
       setUsers(data);
     } catch (error) {
@@ -14,10 +16,9 @@ const Login = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     await fetchData();
-    console.log("c'est ok");
   };
 
   return (

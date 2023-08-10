@@ -2,22 +2,38 @@ import React, { useEffect, useState } from "react";
 import "./postIt.css";
 
 const PostIt = () => {
-  // const [postIts, setPostIts] = useState([]);
+  const [postIts, setPostIts] = useState([]);
+  const [users, setUsers] = useState([]);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await fetch(
-  //         `${import.meta.env.VITE_BACKEND_URL}/user/:id/postIt`,
-  //       );
-  //       const data = await response.json();
-  //       setPostIts(data);
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/user/:id/postIt`
+        );
+        const data = await response.json();
+        setPostIts(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/allUsers`
+        );
+        const data = await response.json();
+        setUsers(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <div className="postit">
@@ -48,7 +64,11 @@ const PostIt = () => {
               <option value="">--Choisi un destinataire--</option>
               <option value="member 1">Member 1</option>
               <option value="member 2">member 2</option>
-              {/* mettre le fetch des user ici */}
+              {users.map((user) => (
+                <option key={user.id}>
+                  {user.name} {user.firstName}
+                </option>
+              ))}
             </select>
           </label>
           <br />
@@ -71,14 +91,14 @@ const PostIt = () => {
               accusamus recusandae debitis ut tempore.
             </p>
           </div>
-          {/* {postIts.map((postIt) => (
-              <div className="message" key={postIt.id}>
-                <p className="author">
-                  De la part de : {postIt.author.name} {postIt.author.firstName}
-                </p>
-                <p className="msg">{postIt.content}</p>
-              </div>
-            ))} */}
+          {postIts.map((postIt) => (
+            <div className="message" key={postIt.id}>
+              <p className="author">
+                De la part de : {postIt.author.name} {postIt.author.firstName}
+              </p>
+              <p className="msg">{postIt.content}</p>
+            </div>
+          ))}
         </div>
       </div>
     </div>
