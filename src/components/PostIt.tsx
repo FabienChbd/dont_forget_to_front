@@ -4,6 +4,24 @@ import "./postIt.css";
 const PostIt = () => {
   const [postIts, setPostIts] = useState([]);
   const [users, setUsers] = useState([]);
+  const [newPostIt, setNewPostIt] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/newPostIt`
+      );
+      const data = await response.json();
+      setNewPostIt(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    await fetchData();
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,26 +59,21 @@ const PostIt = () => {
       {/* ici fetch sur l'user en fonction de l'Id pour nom/prénom */}
       <div>
         <h2>Tu veux envoyer un message c'est ici : </h2>
-        <form>
+        <form onSubmit={handleSubmit}>
           <label>
             <p>Quel est ton message :</p>
             <textarea
               maxLength={500}
               required
-              name="message"
-              id="message"
+              name="content"
+              id="content"
               placeholder="Tape ton message ici"
               onChange={() => {}}
             />
           </label>
           <label>
             <p>A qui l'envoyer :</p>
-            <select
-              name="destinataire"
-              id="destinataire"
-              required
-              onChange={() => {}}
-            >
+            <select name="dest" id="dest" required onChange={() => {}}>
               <option value="">--Choisi un destinataire--</option>
               <option value="member 1">Member 1</option>
               <option value="member 2">member 2</option>
