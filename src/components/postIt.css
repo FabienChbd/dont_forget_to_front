@@ -1,0 +1,56 @@
+.postit {
+  margin-top: 10svh;
+}
+
+button {
+  border: white 2px solid;
+  border-radius: 45px;
+  height: 45px;
+  background-color: transparent;
+  margin-top: 2svh;
+  color: grey;
+}
+
+textarea {
+  border: white 2px solid;
+  border-radius: 40px;
+  height: 10svh;
+  width: 50svw;
+  background-color: transparent;
+  text-align: center;
+}
+
+select {
+  border: white 2px solid;
+  border-radius: 40px;
+  width: 30svw;
+  background-color: transparent;
+  text-align: center;
+  color: grey;
+  height: 40px;
+}
+
+option {
+  background-color: #1e1399;
+}
+
+.messagesZone {
+  border: white 2px solid;
+  border-radius: 40px;
+  padding: 1svw;
+}
+
+.msg {
+  font-size: 0.8em;
+}
+
+.author {
+  font-size: 1em;
+  text-decoration: underline;
+}
+
+.msg,
+.author {
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: left;
+}

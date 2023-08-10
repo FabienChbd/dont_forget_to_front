@@ -1,0 +1,22 @@
+input {
+  border: white 2px solid;
+  border-radius: 40px;
+  height: 40px;
+  width: 25svw;
+  background-color: transparent;
+  text-align: center;
+  color: grey;
+}
+
+.btnLogin {
+  border: white 2px solid;
+  border-radius: 45px;
+  height: 45px;
+  width: 45px;
+  background-color: transparent;
+}
+
+h1,
+h2 {
+  color: white;
+}
