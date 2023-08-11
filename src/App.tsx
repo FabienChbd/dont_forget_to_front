@@ -12,7 +12,7 @@ function App() {
       </header>
       <Routes>
         <Route path="/" element={<Login />}></Route>
-        <Route path="/user/:id/postIt" element={<PostIt />}></Route>
+        <Route path="/user/:userId/postIt" element={<PostIt />}></Route>
       </Routes>
     </Router>
   );

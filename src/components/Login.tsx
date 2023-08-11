@@ -1,24 +1,37 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./login.css";
 
 const Login = () => {
-  const [users, setUsers] = useState([]);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [userId, setUserId] = useState(null);
+  const [error, setError] = useState("");
+  const [login, setLogin] = useState("");
+  const navigate = useNavigate();
 
-  const fetchData = async () => {
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/user/:id`
-      );
-      const data = await response.json();
-      setUsers(data);
-    } catch (error) {
-      console.error(error);
+  const processResponse = async (data) => {
+    if (data.exists) {
+      setLoggedIn(true);
+      setUserId(data.userId);
+      console.log(`URL to navigate: /user/${data.userId}/postIt`);
+      navigate(`/user/${data.userId}/postIt`);
+    } else {
+      setError("Username not found");
     }
   };
 
-  const handleSubmit = async (e: { preventDefault: () => void }) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    await fetchData();
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/user/${login}`
+      );
+      const data = await response.json();
+      await processResponse(data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -30,14 +43,14 @@ const Login = () => {
           type="text"
           name="loginform"
           id="loginform"
+          value={login}
           placeholder="PrénomNom"
-          onChange={() => {}}
+          onChange={(e) => setLogin(e.target.value)}
         />
       </label>
-      <button className="btnLogin" onClick={() => {}} type="submit">
+      <button className="btnLogin" type="submit">
         Go
       </button>
-      {/* Prévoir le fetch des user pour voir si le user est inscrit */}
     </form>
   );
 };

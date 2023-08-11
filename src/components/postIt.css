@@ -34,19 +34,26 @@ option {
   background-color: #1e1399;
 }
 
-.messagesZone {
+.message {
   border: white 2px solid;
   border-radius: 40px;
   padding: 1svw;
+  margin-bottom: 2svw;
 }
 
 .msg {
-  font-size: 0.8em;
+  font-size: 1em;
 }
 
 .author {
-  font-size: 1em;
+  font-size: 0.8em;
   text-decoration: underline;
+}
+
+.headerMsg {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .msg,

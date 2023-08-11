@@ -1,33 +1,54 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./postIt.css";
+import { format } from "date-fns";
 
 const PostIt = () => {
   const [postIts, setPostIts] = useState([]);
   const [users, setUsers] = useState([]);
-  const [newPostIt, setNewPostIt] = useState([]);
+  const [oneUser, setOneUser] = useState([]);
+  const userId = window.location.pathname.match(/\/user\/(\d+)/)[1];
 
-  const fetchData = async () => {
+  const handleSubmit = async (e: {
+    preventDefault: () => void;
+    target: HTMLFormElement | undefined;
+  }) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const content = formData.get("content");
+    const destId = formData.get("dest");
+
+    const dataToSend = {
+      content: content,
+      authorId: parseInt(userId),
+      destId: parseInt(destId),
+    };
+
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/newPostIt`
+        `${import.meta.env.VITE_BACKEND_URL}/newPostIt`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(dataToSend),
+        }
       );
-      const data = await response.json();
-      setNewPostIt(data);
+
+      if (!response.ok) {
+        console.error("Response not ok:", response);
+      }
     } catch (error) {
       console.error(error);
     }
-  };
-
-  const handleSubmit = async (e: { preventDefault: () => void }) => {
-    e.preventDefault();
-    await fetchData();
   };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/user/:id/postIt`
+          `${import.meta.env.VITE_BACKEND_URL}/user/${userId}/postIt`
         );
         const data = await response.json();
         setPostIts(data);
@@ -36,7 +57,7 @@ const PostIt = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,10 +74,24 @@ const PostIt = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/user/${userId}`
+        );
+        const data = await response.json();
+        setOneUser(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, [userId]);
+
   return (
     <div className="postit">
-      <h1> Bonjour User </h1>
-      {/* ici fetch sur l'user en fonction de l'Id pour nom/prénom */}
+      <h1> Bonjour {oneUser.firstname}</h1>
       <div>
         <h2>Tu veux envoyer un message c'est ici : </h2>
         <form onSubmit={handleSubmit}>
@@ -75,11 +110,9 @@ const PostIt = () => {
             <p>A qui l'envoyer :</p>
             <select name="dest" id="dest" required onChange={() => {}}>
               <option value="">--Choisi un destinataire--</option>
-              <option value="member 1">Member 1</option>
-              <option value="member 2">member 2</option>
               {users.map((user) => (
-                <option key={user.id}>
-                  {user.name} {user.firstName}
+                <option key={user.id} value={user.id}>
+                  {user.name} {user.firstname}
                 </option>
               ))}
             </select>
@@ -93,22 +126,18 @@ const PostIt = () => {
       <div>
         <h2>Tu veux voir tes messages c'est ici : </h2>
         <div className="messagesZone">
-          <div className="message">
-            <p className="author">
-              De la part de : <strong>Auteur</strong>
-            </p>
-            <p className="msg">
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sint,
-              aut. Perferendis molestiae velit mollitia minima, maiores odit
-              praesentium quos voluptatem, ipsam doloribus quod? Iste, laborum
-              accusamus recusandae debitis ut tempore.
-            </p>
-          </div>
           {postIts.map((postIt) => (
             <div className="message" key={postIt.id}>
-              <p className="author">
-                De la part de : {postIt.author.name} {postIt.author.firstName}
-              </p>
+              <div className="headerMsg">
+                <p className="author">
+                  De la part de : {postIt.author.name} {postIt.author.firstname}
+                </p>
+
+                <p className="author">
+                  Créé le :
+                  {format(new Date(postIt.createdAt), "dd/MM/yyyy HH:mm:ss")}
+                </p>
+              </div>
               <p className="msg">{postIt.content}</p>
             </div>
           ))}
