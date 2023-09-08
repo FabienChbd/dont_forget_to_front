@@ -1,26 +1,22 @@
-import { useEffect, useState } from "react";
+import { SetStateAction, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./login.css";
 
 const Login = () => {
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [userId, setUserId] = useState(null);
-  const [error, setError] = useState("");
-  const [login, setLogin] = useState("");
+  const [login, setLogin] = useState<string>("");
   const navigate = useNavigate();
 
-  const processResponse = async (data) => {
+  const processResponse = async (data: {
+    exists: boolean;
+    userId: SetStateAction<number | null>;
+  }) => {
     if (data.exists) {
-      setLoggedIn(true);
-      setUserId(data.userId);
       console.log(`URL to navigate: /user/${data.userId}/postIt`);
       navigate(`/user/${data.userId}/postIt`);
-    } else {
-      setError("Username not found");
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
     try {

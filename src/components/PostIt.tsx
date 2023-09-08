@@ -2,53 +2,26 @@ import { useEffect, useState } from "react";
 import "./postIt.css";
 import { format } from "date-fns";
 
+type User = { firstname: string; id: number; name: string };
+
 const PostIt = () => {
-  const [postIts, setPostIts] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [oneUser, setOneUser] = useState([]);
-  const userId = window.location.pathname.match(/\/user\/(\d+)/)[1];
-
-  const handleSubmit = async (e: {
-    preventDefault: () => void;
-    target: HTMLFormElement | undefined;
-  }) => {
-    e.preventDefault();
-
-    const formData = new FormData(e.target);
-    const content = formData.get("content");
-    const destId = formData.get("dest");
-
-    const dataToSend = {
-      content: content,
-      authorId: parseInt(userId),
-      destId: parseInt(destId),
-    };
-
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/newPostIt`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(dataToSend),
-        }
-      );
-
-      if (!response.ok) {
-        console.error("Response not ok:", response);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const [postIts, setPostIts] = useState<
+    {
+      id: number;
+      content: string;
+      author: User;
+      createdAt: Date;
+    }[]
+  >([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [oneUser, setOneUser] = useState<User>();
+  const userId = window.location.pathname.match(/\/user\/(\d+)/)?.[1];
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/user/${userId}/postIt`
+          `${import.meta.env.VITE_BACKEND_URL}/users/${userId}/postIt`
         );
         const data = await response.json();
         setPostIts(data);
@@ -78,8 +51,9 @@ const PostIt = () => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/user/${userId}`
+          `${import.meta.env.VITE_BACKEND_URL}/users/${userId}`
         );
+
         const data = await response.json();
         setOneUser(data);
       } catch (error) {
@@ -88,6 +62,44 @@ const PostIt = () => {
     };
     fetchData();
   }, [userId]);
+
+  if (!userId) return <p>Un problème est survenu</p>;
+  if (!oneUser) return <p> </p>;
+
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+    const content = formData.get("content");
+    const destId = formData.get("dest")?.toString() || "";
+
+    const dataToSend = {
+      content: content,
+      authorId: parseInt(userId),
+      destId: parseInt(destId),
+    };
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/newPostIt`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(dataToSend),
+        }
+      );
+
+      if (!response.ok) {
+        alert("Un problème à eu lieu lors de l'envoi");
+      } else {
+        alert("C'est envoyé !!!");
+      }
+    } catch (error) {
+      alert("Un problème à eu lieu lors de l'envoi");
+    }
+  };
 
   return (
     <div className="postit">
@@ -132,7 +144,6 @@ const PostIt = () => {
                 <p className="author">
                   De la part de : {postIt.author.name} {postIt.author.firstname}
                 </p>
-
                 <p className="author">
                   Créé le :
                   {format(new Date(postIt.createdAt), "dd/MM/yyyy HH:mm:ss")}
