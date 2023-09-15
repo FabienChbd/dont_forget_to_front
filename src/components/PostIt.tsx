@@ -124,7 +124,7 @@ const PostIt = () => {
               <option value="">--Choisi un destinataire--</option>
               {users.map((user) => (
                 <option key={user.id} value={user.id}>
-                  {user.name} {user.firstname}
+                  {user.firstname} {user.name}
                 </option>
               ))}
             </select>
@@ -142,7 +142,7 @@ const PostIt = () => {
             <div className="message" key={postIt.id}>
               <div className="headerMsg">
                 <p className="author">
-                  De la part de : {postIt.author.name} {postIt.author.firstname}
+                  De la part de : {postIt.author.firstname} {postIt.author.name}
                 </p>
                 <p className="author">
                   Créé le :
